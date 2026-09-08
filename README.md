@@ -7,18 +7,18 @@ It uses Prisma ORM with a PostgreSQL database, secured with Role-Based Access Co
 
 ```mermaid
 graph TD
-    Client[("📱 Client Browser")] -->|HTTPS / REST API| Vercel[("⚡ Vercel (Frontend)")]
-    Client -->|API Requests| Render[("☁️ Render Web Service (Backend)")]
+    Client["📱 Client Browser"] -->|"HTTPS / REST API"| Vercel["⚡ Vercel (Frontend)"]
+    Client -->|"API Requests"| Render["☁️ Render Web Service (Backend)"]
     
     subgraph "Backend Architecture"
-        Render -->|Express.js| Router[("🛣️ Routes")]
-        Router --> AuthMiddleware[("🔒 Auth & Permissions Middleware")]
-        AuthMiddleware --> Controllers[("⚙️ Controllers")]
-        Controllers --> Services[("🛠️ Business Logic Services")]
-        Services --> Prisma[("🗄️ Prisma ORM")]
+        Render -->|"Express.js"| Router["🛣️ Routes"]
+        Router --> AuthMiddleware["🔒 Auth & Permissions Middleware"]
+        AuthMiddleware --> Controllers["⚙️ Controllers"]
+        Controllers --> Services["🛠️ Business Logic Services"]
+        Services --> Prisma["🗄️ Prisma ORM"]
     end
     
-    Prisma -->|TCP / Postgres| DB[("🐘 Render PostgreSQL DB")]
+    Prisma -->|"TCP / Postgres"| DB[("🐘 Render PostgreSQL DB")]
 ```
 
 ## Features
