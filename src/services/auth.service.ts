@@ -1,5 +1,5 @@
 import { PrismaClient, type User } from '@prisma/client';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import type { LoginInput } from '../dtos/auth.dto.js';
 
