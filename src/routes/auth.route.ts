@@ -5,6 +5,6 @@ import { authRateLimiter } from '../middlewares/rate-limiter.middleware.js';
 const router = Router();
 
 // Apply the strict 5 requests/15 mins rate limiter to the login route
-router.post('/login', AuthController.login);
+router.post('/login', authRateLimiter, AuthController.login);
 
 export default router;
