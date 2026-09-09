@@ -6,6 +6,14 @@ const prisma = new PrismaClient();
 export class UserService {
   static async createUser(data: any): Promise<Partial<User>> {
     const hashedPassword = await bcrypt.hash(data.password, 10);
+    
+    let userPermissions = data.permissions;
+    if (!userPermissions || userPermissions.length === 0) {
+      const roleDef = await prisma.rolePermission.findUnique({
+        where: { role: data.role }
+      });
+      userPermissions = roleDef ? roleDef.permissions : [];
+    }
 
     const user = await prisma.user.create({
       data: {
@@ -13,7 +21,7 @@ export class UserService {
         passwordHash: hashedPassword,
         role: data.role,
         tenantId: data.tenantId,
-        permissions: data.permissions || [],
+        permissions: userPermissions,
       },
     });
 
@@ -58,6 +66,12 @@ export class UserService {
       }
     });
     return user;
+  }
+
+  static async deleteUser(id: string): Promise<void> {
+    await prisma.user.delete({
+      where: { id }
+    });
   }
 
   static async updateRolePermissions(role: Role, permissions: string[]): Promise<void> {

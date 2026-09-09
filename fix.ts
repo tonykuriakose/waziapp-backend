@@ -1,6 +1,21 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
-prisma.user.update({ where: { email: 't4tonykuriakose@gmail.com' }, data: { isActive: true } })
-  .then(console.log)
+
+async function fixPermissions() {
+  const users = await prisma.user.findMany({ where: { permissions: { isEmpty: true } } });
+  
+  for (const user of users) {
+    const roleDef = await prisma.rolePermission.findUnique({ where: { role: user.role } });
+    if (roleDef) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { permissions: roleDef.permissions }
+      });
+      console.log(`Fixed permissions for ${user.email} (${user.role})`);
+    }
+  }
+}
+
+fixPermissions()
   .catch(console.error)
   .finally(() => prisma.$disconnect());

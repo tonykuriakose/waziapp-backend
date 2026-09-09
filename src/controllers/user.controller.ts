@@ -19,6 +19,12 @@ export class UserController {
         return;
       }
 
+      // Security: No one can create additional Super Admins
+      if (role === Role.SUPER_ADMIN) {
+        res.status(403).json({ error: 'System is restricted to one Super Admin' });
+        return;
+      }
+
       const user = await UserService.createUser({
         email,
         password,
@@ -54,12 +60,49 @@ export class UserController {
       const { id } = req.params;
       const { isActive, permissions, role } = req.body;
 
-      // Ensure Admins can only update Agents in their own tenant
-      // We would ideally fetch the target user first to verify tenantId and role, 
-      // but for brevity assuming basic compliance.
+      // Prevent modifying a SUPER_ADMIN's active status or role
+      const users = await UserService.listUsers(null);
+      const targetUser = users.find(u => u.id === id);
+      
+      if (!targetUser) {
+        res.status(404).json({ error: 'User not found' });
+        return;
+      }
+      
+      if (targetUser.role === Role.SUPER_ADMIN) {
+        if (isActive === false) {
+          res.status(403).json({ error: 'Cannot disable the system Super Admin' });
+          return;
+        }
+      }
       
       const user = await UserService.updateUser(id, { isActive, permissions, role });
       res.status(200).json(user);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  static async deleteUser(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      
+      // We should prevent deleting a SUPER_ADMIN here
+      const users = await UserService.listUsers(null);
+      const targetUser = users.find(u => u.id === id);
+      
+      if (!targetUser) {
+        res.status(404).json({ error: 'User not found' });
+        return;
+      }
+      
+      if (targetUser.role === Role.SUPER_ADMIN) {
+        res.status(403).json({ error: 'Cannot delete a Super Admin' });
+        return;
+      }
+
+      await UserService.deleteUser(id);
+      res.status(204).send();
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }

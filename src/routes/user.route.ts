@@ -13,6 +13,7 @@ router.use(authenticateJWT);
 router.post('/', requirePermission('users.create'), UserController.createUser);
 router.get('/', requirePermission('users.read'), UserController.listUsers);
 router.put('/:id', requirePermission('users.update'), UserController.updateUser);
+router.delete('/:id', requirePermission('users.update'), UserController.deleteUser);
 // Note: Users disable/enable is handled via update (isActive flag)
 
 // Permission Management Route (Super Admin Only)
