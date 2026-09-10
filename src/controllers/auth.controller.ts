@@ -9,10 +9,11 @@ export class AuthController {
       const result = await AuthService.login(validatedData);
       
       // Set HttpOnly cookie
+      const isProduction = process.env.NODE_ENV === 'production';
       res.cookie('token', result.token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: isProduction,
+        sameSite: isProduction ? 'none' : 'strict',
         maxAge: 24 * 60 * 60 * 1000 // 1 day
       });
 
@@ -27,10 +28,11 @@ export class AuthController {
   }
 
   static async logout(req: Request, res: Response): Promise<void> {
+    const isProduction = process.env.NODE_ENV === 'production';
     res.clearCookie('token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'strict'
     });
     res.status(200).json({ success: true, message: 'Logged out successfully' });
   }
