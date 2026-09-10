@@ -1,7 +1,7 @@
 # WaziApp Backend
 
 This is the Node.js/Express backend for WaziApp, a multi-tenant project management SaaS. 
-It uses Prisma ORM with a PostgreSQL database, secured with Role-Based Access Control (RBAC) via JWTs.
+It uses Prisma ORM with a PostgreSQL database, secured with Role-Based Access Control (RBAC) via HttpOnly Cookie JWTs.
 
 ## System Architecture
 
@@ -24,7 +24,7 @@ graph TD
 ## Features
 - **Multi-tenancy:** Data isolation using Tenant IDs.
 - **RBAC:** Roles (`SUPER_ADMIN`, `ADMIN`, `AGENT`) mapped to fine-grained permissions.
-- **Security:** `helmet`, `cors`, `express-rate-limit`, `bcryptjs`, and JWT verification.
+- **Security:** `helmet`, strict `cors`, HttpOnly cookies (`cookie-parser`), `express-rate-limit`, `bcryptjs`, and JWT verification.
 - **Validation:** Type-safe DTO validation using `zod`.
 
 ## Getting Started

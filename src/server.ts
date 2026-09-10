@@ -2,6 +2,7 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import projectRoutes from './routes/project.route.js';
 import authRoutes from './routes/auth.route.js';
@@ -15,7 +16,11 @@ const PORT = process.env.PORT || 5000;
 
 // middlware for secure http
 app.use(helmet());
-app.use(cors()); 
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}));
+app.use(cookieParser()); 
 app.use(express.json());
 
 // General API Rate Limiting (100 req/min)

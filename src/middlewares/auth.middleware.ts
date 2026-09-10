@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_key_change_me_in_production';
+const JWT_SECRET = process.env.JWT_SECRET || 'my_secret';
 
 // Extend Express Request type to include the decoded user
 declare global {
@@ -18,10 +18,16 @@ declare global {
 }
 
 export const authenticateJWT = (req: Request, res: Response, next: NextFunction): void => {
-  const authHeader = req.headers.authorization;
+  let token = req.cookies?.token;
 
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    const token = authHeader.split(' ')[1];
+  if (!token) {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    }
+  }
+
+  if (token) {
 
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
       if (err) {

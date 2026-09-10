@@ -6,5 +6,6 @@ const router = Router();
 
 // Apply the strict 5 requests/15 mins rate limiter to the login route
 router.post('/login', authRateLimiter, AuthController.login);
+router.post('/logout', AuthController.logout);
 
 export default router;
